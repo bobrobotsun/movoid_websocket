@@ -32,7 +32,8 @@ class OneListener:
                 time_now = time.time()
                 self._history.append([time_now, receive_text])
             except Exception:
-                self._ws.close()
+                if self._ws.connected:
+                    self._ws.close()
                 self._ws.connect(self._url)
 
     def sign(self, sign_name="__default__"):
@@ -161,7 +162,7 @@ class OneListener:
 
     def wait_until_no_pass_text_new(self, check_function, sign=None, refresh_sign=False, no_new_time=3, check_interval=0.1, timeout=15):
         """
-        检查是否能保持一段时间没有新的满足要求的信息传入
+        检查是否能保持一段时间没有找到新可以满足要求的信息传入
         :param check_function: 检查函数，如果输入的变量没有__call__，那么就认定为全匹配文本
         :param sign: 标记，标记后的文本才会检查，输入None时会检查全文本
         :param refresh_sign: 是否立刻刷新一次sign，默认不刷新，可以保证排除sign过早标记产生的影响
