@@ -273,7 +273,7 @@ class WebSocketListener:
 
     def wait_until_no_pass_text_new(self, name, check_function, sign=None, refresh_sign=False, no_new_time=3, check_interval=0.1, timeout=15):
         """
-        检查是否能保持一段时间没有新的满足要求的信息传入
+        检查是否能保持一段时间没有新满足要求的信息传入
         :param name: 标签名，一定要输入
         :param check_function: 检查函数，如果输入的变量没有__call__，那么就认定为全匹配文本
         :param sign: 标记，标记后的文本才会检查，输入None时会检查全文本
