@@ -23,6 +23,10 @@ class OneListener:
         self._sign = {}
         self.start()
 
+    @property
+    def url(self):
+        return self._url
+
     def _thread_listen(self):
         if not self._ws.connected:
             self._ws.connect(self._url)
@@ -42,13 +46,14 @@ class OneListener:
         self.start()
 
     def start(self):
+        self._stop = False
         if not self._thread.is_alive():
             self._thread = threading.Thread(target=self._thread_listen)
             self._thread.daemon = True
             self._thread.start()
 
     def stop(self):
-        self._stop = False
+        self._stop = True
 
     def _find_history_text_after_sign(self, sign=None):
         """
@@ -227,9 +232,19 @@ class WebSocketListener:
     def ws(self):
         return self._ws
 
-    def start(self, url, name=None):
+    def start(self, url, name=None, reinit: bool = False):
+        """
+        启动一个全新的websocket监听，如果本来已经启动好了，可以选择重启，而不是重新创建，
+        :param url:
+        :param name:
+        :param reinit: 默认不会重新创建，同一个则直接start
+        :return:
+        """
         name = str(url) if name is None else str(name)
-        self._ws[name] = OneListener(url)
+        if name in self._ws and self._ws[name].url == url and not reinit:
+            self._ws[name].start()
+        else:
+            self._ws[name] = OneListener(url)
 
     def sign(self, name, sign):
         self._ws[name].sign(sign)
